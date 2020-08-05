@@ -16,15 +16,48 @@
         android:gravity="center"
         />
 
+
+    <EditText
+        android:id="@+id/Phone"
+        android:ems="10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:hint="Enter your phone number"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/Title"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+
+
+
     <EditText
         android:id="@+id/Name"
         android:ems="10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:hint="Enter your name"
+        android:hint="Enter your first name"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/Title"
+        app:layout_constraintTop_toBottomOf="@+id/Phone"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+
+    <EditText
+        android:id="@+id/NameLast"
+        android:ems="10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="Enter your last name"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/Name"
         android:layout_marginTop="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +75,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/Name"
+        app:layout_constraintTop_toBottomOf="@+id/NameLast"
         android:layout_marginTop="50dp"
          />
 
