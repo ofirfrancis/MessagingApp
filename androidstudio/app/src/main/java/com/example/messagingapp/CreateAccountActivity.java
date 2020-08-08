@@ -9,6 +9,7 @@ import android.view.ContextMenu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,7 +29,6 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 public class CreateAccountActivity extends AppCompatActivity {
-    Boolean check = true;
     Button submitButton;
     EditText name;
     EditText nameLast;
@@ -59,6 +59,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         String passwordString = password.getText().toString();
         String nameLastString = nameLast.getText().toString();
         String phoneString = phone.getText().toString();
+        submitButton.setEnabled(false);
 
         class UploadCreateAccountClass  extends AsyncTask<Void, Void, String> {
             Context context;
@@ -75,6 +76,17 @@ public class CreateAccountActivity extends AppCompatActivity {
             protected void onPostExecute(String result){
                 super.onPostExecute(result);
                 Log.d("result", result);
+//                GO TO CHAT
+                if (result == "success"){
+                    Toast.makeText(getApplicationContext(),"Account created successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("phoneNumber", phoneString);
+                    startActivity(intent);
+
+                }else{
+                    Toast.makeText(getApplicationContext(),"Nope!", Toast.LENGTH_SHORT).show();
+                    submitButton.setEnabled(true);
+                }
             }
 
             @Override
@@ -137,6 +149,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         }
 
         private String buffferedWriterDataFN(HashMap<String ,String> hashMapParams) throws UnsupportedEncodingException {
+            Boolean check = true;
             StringBuilder stringBuilder = new StringBuilder();
             for(Map.Entry<String ,String > key:hashMapParams.entrySet()){
                 if(check){
