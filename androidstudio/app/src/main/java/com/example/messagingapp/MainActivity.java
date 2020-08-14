@@ -34,15 +34,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Bundle extras = getIntent().getExtras();
-        phoneString = extras.getString("phone");
+        phoneString = extras.getString("phoneNumber");
         getChats();
     }
 
     void getChats(){
 
-        class UploadCreateAccountClass  extends AsyncTask<Void, Void, String> {
+        class GetChatsClass  extends AsyncTask<Void, Void, String> {
             Context context;
-            public UploadCreateAccountClass(Context context){
+            public GetChatsClass(Context context){
                 this.context = context;
             }
 
@@ -55,15 +55,6 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(String result){
                 super.onPostExecute(result);
                 Log.d("result", result);
-//                GO TO CHAT
-                if (result == "success"){
-                    Toast.makeText(getApplicationContext(),"Login SUCCESSFUL!", Toast.LENGTH_SHORT);
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(getApplicationContext(),"You are not authorised please leave now!", Toast.LENGTH_SHORT);
-
-                }
 
             }
 
@@ -72,14 +63,15 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.DataProcessClass dataProcessClass = new MainActivity.DataProcessClass();
                 HashMap<String, String> hashMapParams = new HashMap<String, String>();
                 hashMapParams.put("phone", phoneString);
+                Log.d("phone", phoneString);
                 String response = dataProcessClass.sendHTTPRequest("https://messagingapp1.000webhostapp.com/getChats.php", hashMapParams);
                 Log.d("response",response);
                 return response;
             }
 
         }
-        UploadCreateAccountClass uploadCreateAccountClass = new UploadCreateAccountClass(this);
-        uploadCreateAccountClass.execute();
+        GetChatsClass getChatsClass = new GetChatsClass(this);
+        getChatsClass.execute();
     }
 
 

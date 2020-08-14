@@ -46,9 +46,9 @@ public class LoginActivity extends AppCompatActivity {
         String passwordString = password.getText().toString();
         submitButton.setEnabled(false);
 
-        class UploadCreateAccountClass  extends AsyncTask<Void, Void, String> {
+        class LoginClass  extends AsyncTask<Void, Void, String> {
             Context context;
-            public UploadCreateAccountClass(Context context){
+            public LoginClass(Context context){
                 this.context = context;
             }
 
@@ -85,8 +85,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         }
-        UploadCreateAccountClass uploadCreateAccountClass = new UploadCreateAccountClass(this);
-        uploadCreateAccountClass.execute();
+        LoginClass loginClass = new LoginClass(this);
+        loginClass.execute();
     }
 
 
