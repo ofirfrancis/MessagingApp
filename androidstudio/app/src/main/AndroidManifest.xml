@@ -14,7 +14,11 @@
         <activity android:name=".MainActivity"/>
         <activity android:name=".CreateAccountActivity"/>
         <activity android:name=".LoginActivity"/>
+        <activity android:name=".ShowMessagesActivity"/>
         <activity android:name=".MenuActivity">
+
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

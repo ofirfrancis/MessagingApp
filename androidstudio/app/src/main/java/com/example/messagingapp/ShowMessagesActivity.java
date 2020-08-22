@@ -1,17 +1,18 @@
 package com.example.messagingapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,48 +29,49 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.ItemClickListener {
+public class ShowMessagesActivity extends AppCompatActivity implements RecyclerViewAdapterShowMessages.ItemClickListener {
 
-    public static String phoneString;
+
+    EditText message;
+    Button sendButton;
+    String userPhone;
+    String[] user2Details;
     String[][] data;
-    public RecyclerViewAdapter recyclerViewAdapter;
+    public RecyclerViewAdapterShowMessages recyclerViewAdapter;
     RecyclerView recyclerView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.show_messages);
+        message = findViewById(R.id.messageText);
+        sendButton = findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(v->sendMessage());
         Bundle extras = getIntent().getExtras();
-        phoneString = extras.getString("phoneNumber");
-
+        userPhone = extras.getString("userPhone");
+        user2Details = extras.getStringArray("user2Details");
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-
-        getChats();
+        retrieveMessages();
     }
 
-
     public void setUpAdapter(){
-        recyclerViewAdapter = new RecyclerViewAdapter(this, data);
+        recyclerViewAdapter = new RecyclerViewAdapterShowMessages(this, data);
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
 
-    public void onItemClick(View view, int position){
-        Log.i("clicked", "you clicked on "+ Arrays.toString(recyclerViewAdapter.getItem(position)) + "at cell position " + position);
-        Intent intent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
-        intent.putExtra("userPhone", phoneString);
-        intent.putExtra("user2Details", recyclerViewAdapter.getItem(position));
-        startActivity(intent);
+    public void onItemClick(View view, int position) {
+        Log.i("clicked", "you clicked on " + Arrays.toString(recyclerViewAdapter.getItem(position)) + "at cell position " + position);
     }
+    void sendMessage(){
+        String messageString = message.getText().toString();
+        sendButton.setEnabled(false);
 
-    void getChats(){
-
-        class GetChatsClass  extends AsyncTask<Void, Void, String> {
+        class SendMessageClass  extends AsyncTask<Void, Void, String> {
             Context context;
-            public GetChatsClass(Context context){
+            public SendMessageClass(Context context){
                 this.context = context;
             }
 
@@ -82,31 +84,80 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             protected void onPostExecute(String result){
                 super.onPostExecute(result);
                 Log.d("result", result);
-                String[] byAccounts = result.split("/");
-                data = new String[byAccounts.length][4];
-                for (int i = 0; i < byAccounts.length; i++){
-                    data[i] = byAccounts[i].split(",");
+//                GO TO CHAT
+                if (result.equals("1")){
+                    Toast.makeText(getApplicationContext(),"message sent", Toast.LENGTH_SHORT).show();
+
+                }else{
+                    Toast.makeText(getApplicationContext(),"error sending message", Toast.LENGTH_SHORT).show();
+                    sendButton.setEnabled(true);
                 }
-                setUpAdapter();
-//                Log.d("data", Arrays.deepToString(data));
+
             }
 
             @Override
             protected String doInBackground(Void... params){
-                MainActivity.DataProcessClass dataProcessClass = new MainActivity.DataProcessClass();
+                ShowMessagesActivity.DataProcessClass dataProcessClass = new ShowMessagesActivity.DataProcessClass();
                 HashMap<String, String> hashMapParams = new HashMap<String, String>();
-                hashMapParams.put("phone", phoneString);
-                Log.d("phone", phoneString);
-                String response = dataProcessClass.sendHTTPRequest("https://messagingapp1.000webhostapp.com/getChats.php", hashMapParams);
-                Log.d("response",response);
+                hashMapParams.put("message", messageString);
+                hashMapParams.put("sender", userPhone);
+                hashMapParams.put("chatID",user2Details[3]);
+                String response = dataProcessClass.sendHTTPRequest("https://messagingapp1.000webhostapp.com/sendMessage.php", hashMapParams);
                 return response;
             }
 
         }
-        GetChatsClass getChatsClass = new GetChatsClass(this);
-        getChatsClass.execute();
+        SendMessageClass sendMessageClass = new SendMessageClass(this);
+        sendMessageClass.execute();
     }
 
+
+    void retrieveMessages(){
+
+        class RetrieveMessageClass  extends AsyncTask<Void, Void, String> {
+            Context context;
+            public RetrieveMessageClass(Context context){
+                this.context = context;
+            }
+
+            @Override
+            protected void onPreExecute(){
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                super.onPostExecute(result);
+                Log.d("result", result);
+                if (result.length() >= 5 && result.substring(0,5).equals("works")){
+                    Toast.makeText(getApplicationContext(),"messages received", Toast.LENGTH_SHORT).show();
+                    String[] temp = result.split("/");
+                    String[] byMessage = Arrays.copyOfRange(temp,1,temp.length);
+                    data = new String[byMessage.length][3];
+                    for (int i = 0; i < byMessage.length; i++){
+                        data[i] = byMessage[i].split(",");
+                    }
+                    setUpAdapter();
+
+                }else{
+                    Toast.makeText(getApplicationContext(),"error receiving message", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            protected String doInBackground(Void... params){
+                ShowMessagesActivity.DataProcessClass dataProcessClass = new ShowMessagesActivity.DataProcessClass();
+                HashMap<String, String> hashMapParams = new HashMap<String, String>();
+                hashMapParams.put("id",user2Details[3]);
+                String response = dataProcessClass.sendHTTPRequest("https://messagingapp1.000webhostapp.com/retrieveMessages.php", hashMapParams);
+                return response;
+            }
+
+        }
+        RetrieveMessageClass retrieveMessageClass = new RetrieveMessageClass(this);
+        retrieveMessageClass.execute();
+    }
 
     public class DataProcessClass {
         public String sendHTTPRequest(String requestURL, HashMap<String,String> paramData){
@@ -165,7 +216,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             return stringBuilder.toString();
         }
     }
-
 
 
 

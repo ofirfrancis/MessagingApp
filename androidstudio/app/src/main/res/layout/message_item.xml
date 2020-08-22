@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/messageOval"
+        android:layout_width="288dp"
+        android:layout_height="match_parent"
+        android:gravity="start"
+        android:layout_alignParentLeft="true"
+        android:scaleType="fitXY"
+        android:background="@drawable/messageoval"
+        android:minHeight="50dp"
+        />
+    <TextView
+        android:id="@+id/messageText"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:minHeight="40dp"
+        />
+
+</RelativeLayout>
